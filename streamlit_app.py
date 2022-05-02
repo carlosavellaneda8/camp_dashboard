@@ -1,4 +1,5 @@
 """Streamlit app"""
+import numpy as np
 import pandas as pd
 import streamlit as st
 from camp_dashboard.etl import AirtableData
@@ -37,7 +38,7 @@ def person_summary(input_dataset: pd.DataFrame) -> pd.DataFrame:
     person_data.drop_duplicates(subset="número_de_documento", inplace=True)
     output = person_data.merge(payment_summary)
     output.columns = output.columns.str.replace("_", " ").str.upper()
-    return output
+    return output.fillna("")
 
 
 def week_summary(input_dataset: pd.DataFrame) -> pd.DataFrame:
@@ -61,12 +62,14 @@ st.title("Retiro Nacional de Jóvenes ILBD 2022 - Reporte de pagos")
 
 ministry_list = ["Todos"] + dataset.ministerio_obra.drop_duplicates().tolist()
 mission_list = ["Todos"] + dataset.detalle_obra.drop_duplicates().tolist()
+mission_list = [obj for obj in mission_list if obj is not np.nan]
 
-main_filter = st.selectbox("Filtrar por ministerio/obra:", ministry_list)
-if main_filter == "Obra/iglesia hija":
-    secondary_filter = st.selectbox("Obra o iglesia hija:", mission_list)
-else:
-    secondary_filter = None
+with st.sidebar:
+    main_filter = st.selectbox("Filtrar por ministerio/obra:", ministry_list)
+    if main_filter == "Obra/iglesia hija":
+        secondary_filter = st.selectbox("Obra o iglesia hija:", mission_list)
+    else:
+        secondary_filter = None
 
 filtered_dataset = filter_data(input_dataset=dataset, column="ministerio_obra", value=main_filter)
 
