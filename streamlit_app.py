@@ -91,8 +91,8 @@ if check_password():
     # Dashboard content
     st.title("Retiro Nacional de Jóvenes ILBD 2022 - Reporte de pagos")
 
-    ministry_list = ["Todos"] + dataset.ministerio_obra.drop_duplicates().tolist()
-    mission_list = ["Todos"] + dataset.detalle_obra.drop_duplicates().tolist()
+    ministry_list = ["Todos"] + dataset.ministerio_obra.drop_duplicates().sort_values().tolist()
+    mission_list = ["Todos"] + dataset.detalle_obra.drop_duplicates().sort_values().tolist()
     mission_list = [obj for obj in mission_list if obj is not np.nan]
 
     with st.sidebar:
