@@ -66,6 +66,7 @@ def person_summary(input_dataset: pd.DataFrame) -> pd.DataFrame:
     ]].copy()
     person_data.drop_duplicates(subset="número_de_documento", inplace=True)
     output = person_data.merge(payment_summary).sort_values(by="total_abono", ascending=False)
+    output["número_de_documento"] = output.número_de_documento.astype(str)
     output.columns = output.columns.str.replace("_", " ").str.upper()
     return output.fillna("")
 
