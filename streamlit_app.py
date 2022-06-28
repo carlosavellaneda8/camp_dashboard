@@ -53,7 +53,8 @@ def filter_data(input_dataset: pd.DataFrame, column: str, value: str) -> pd.Data
     output = input_dataset.copy()
     if value == "Todos":
         return output
-    return output[output[column] == value]
+    filter_ids = output.loc[output[column] == value, "número_de_documento"].drop_duplicates()
+    return output[output.número_de_documento.isin(filter_ids)]
 
 
 def person_summary(input_dataset: pd.DataFrame) -> pd.DataFrame:
