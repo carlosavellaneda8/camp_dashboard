@@ -94,22 +94,31 @@ if check_password():
     st.title("Retiro Nacional de Jóvenes ILBD 2022 - Reporte de pagos")
 
     ministry_list = ["Todos"] + dataset.ministerio_obra.drop_duplicates().sort_values().tolist()
+    ministry_list.append("Documento")
     mission_list = ["Todos"] + dataset.detalle_obra.drop_duplicates().sort_values().tolist()
     mission_list = [obj for obj in mission_list if obj is not np.nan]
 
     with st.sidebar:
-        main_filter = st.selectbox("Filtrar por ministerio/obra:", ministry_list)
+        main_filter = st.selectbox("Filtrar por:", ministry_list)
         if main_filter == "Obra/iglesia hija":
             secondary_filter = st.selectbox("Obra o iglesia hija:", mission_list)
+        elif main_filter == "Documento":
+            secondary_filter = st.number_input("Número de documento:", format="%d", value=0)
         else:
             secondary_filter = None
 
     filtered_dataset = filter_data(input_dataset=dataset, column="ministerio_obra", value=main_filter)
 
     if secondary_filter:
-        filtered_dataset = filter_data(
-            input_dataset=filtered_dataset, column="detalle_obra", value=secondary_filter
-        )
+        if main_filter == "Obra/iglesia hija":
+            filtered_dataset = filter_data(
+                input_dataset=filtered_dataset, column="detalle_obra", value=secondary_filter
+            )
+        else:
+            filtered_dataset = filter_data(
+                input_dataset=dataset, column="número_de_documento", value=secondary_filter
+            )
+
 
     st.markdown(f"""
     ### Total de personas inscritas
