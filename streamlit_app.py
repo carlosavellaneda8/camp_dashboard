@@ -12,7 +12,7 @@ HEADERS = {"Authorization": f"Bearer {API_KEY}"}
 
 
 # General functions:
-@st.cache
+@st.cache(allow_output_mutation=True, ttl=60 * 60 * 2)
 def get_data():
     """Retrieve Airtable's data"""
     etl = AirtableData(url=URL, headers=HEADERS)
@@ -91,12 +91,12 @@ if check_password():
     dataset = get_data()
 
     # Dashboard content
-    st.title("Retiro Nacional de Jóvenes ILBD 2022 - Reporte de pagos")
+    st.title("Retiro Nacional de Jóvenes ILBD 2023 - Reporte de pagos")
 
     ministry_list = ["Todos"] + dataset.ministerio_obra.drop_duplicates().sort_values().tolist()
     ministry_list.append("Documento")
     mission_list = ["Todos"] + dataset.detalle_obra.drop_duplicates().sort_values().tolist()
-    mission_list = [obj for obj in mission_list if obj is not np.nan]
+    mission_list = [obj for obj in mission_list if obj not in ["", np.nan]]
 
     with st.sidebar:
         main_filter = st.selectbox("Filtrar por:", ministry_list)
