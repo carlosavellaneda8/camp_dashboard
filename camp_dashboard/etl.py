@@ -5,6 +5,10 @@ import pandas as pd
 import streamlit as st
 
 today_date = date.today().strftime("%Y-%m-%d")
+REQUIRED_COLUMNS = [
+    "detalle_obra",
+    "quién_invitó",
+]
 
 
 class AirtableData:
@@ -43,8 +47,12 @@ class AirtableData:
         """Preprocess the downloaded data"""
         self.data.columns = self.data.columns.str.replace("fields.", "", regex=False)
         self.data.columns = self.data.columns.str.replace(" +|/", "_", regex=True).str.lower()
-        self.data["detalle_obra"] = self.data.detalle_obra.str.strip()
+        if "detalle_obra" in self.data:
+            self.data["detalle_obra"] = self.data.detalle_obra.str.strip()
         payment_date = pd.to_datetime(self.data.fecha_de_abono, format="%Y-%m-%d")
         self.data["fecha_de_abono"] = payment_date
         self.data["week"] = payment_date - pd.to_timedelta(payment_date.dt.dayofweek, unit="d")
         self.data["week"] = self.data.week.dt.strftime("%Y-%m-%d")
+        for column in REQUIRED_COLUMNS:
+            if column not in self.data:
+                self.data[column] = ""
