@@ -81,7 +81,7 @@ def week_summary(input_dataset: pd.DataFrame) -> pd.DataFrame:
 
 # Dasboard setup
 st.set_page_config(
-    page_title="Retiro Nacional de Jóvenes",
+    page_title="Retiro de Jóvenes TBU",
     page_icon="✅",
     layout="wide",
 )
@@ -89,6 +89,7 @@ st.set_page_config(
 if check_password():
     # Retrieving the data
     dataset = get_data()
+    dataset["apoyos"] = dataset.observaciones.str.lower().str.contains("apoyo")
 
     # Dashboard content
     st.title("Retiro Nacional de Jóvenes ILBD 2023 - Reporte de pagos")
@@ -120,14 +121,26 @@ if check_password():
             )
 
 
+    exclude_rows = filtered_dataset.apoyos == True
+    number_inscriptions = filtered_dataset.loc[~exclude_rows, "número_de_documento"].drop_duplicates().size
+    number_offerings = filtered_dataset.loc[exclude_rows, "número_de_documento"].drop_duplicates().size
+    total_value = filtered_dataset["total_abono"].sum()
+    total_payments = filtered_dataset.loc[~exclude_rows, "total_abono"].sum()
+    total_offerings = filtered_dataset.loc[exclude_rows, "total_abono"].sum()
     st.markdown(f"""
     ### Total de personas inscritas
 
-    El total de inscritos es {filtered_dataset["número_de_documento"].drop_duplicates().size}
+    El total de inscritos es {number_inscriptions}
+
+    El total de registros de apoyos es {number_offerings}
 
     ### Valor total recaudado
 
-    El valor total recaudado es de ${filtered_dataset.total_abono.sum():,.0f}
+    El valor total recaudado es de ${total_value:,.0f}
+
+    El valor total pagos de jóvenes es de ${total_payments:,.0f}
+
+    El valor total de apoyos registrados es de ${total_offerings:,.0f}
     """)
 
     week_data = week_summary(input_dataset=filtered_dataset)

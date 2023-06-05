@@ -8,6 +8,7 @@ authors = ["carlosavellaneda8 <carlos.avellaneda8@gmail.com>"]
 python = "^3.8"
 pandas = "^1.4.2"
 streamlit = "^1.8.1"
+altair = "4.2.2"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
