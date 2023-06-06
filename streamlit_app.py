@@ -144,7 +144,7 @@ if check_password():
     """)
 
     week_data = week_summary(input_dataset=filtered_dataset)
-    person_dataset = person_summary(input_dataset=filtered_dataset)
+    person_dataset = person_summary(input_dataset=filtered_dataset[~exclude_rows])
 
     st.bar_chart(week_data)
     st.dataframe(person_dataset)
