@@ -12,7 +12,7 @@ HEADERS = {"Authorization": f"Bearer {API_KEY}"}
 
 
 # General functions:
-@st.cache(allow_output_mutation=True, ttl=60 * 60 * 2)
+@st.cache(allow_output_mutation=True, ttl=60 * 15)
 def get_data():
     """Retrieve Airtable's data"""
     etl = AirtableData(url=URL, headers=HEADERS)
